@@ -4,8 +4,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/person")
 public class PersonController {
@@ -18,22 +16,22 @@ public class PersonController {
 
     @GetMapping
     public Flux<Person> list() {
-        return Flux.fromIterable(List.of(new Person("1", "jorge caro")));
+        return service.list();
     }
 
     @GetMapping("/{id}")
     public Mono<Person> get(@PathVariable String id) {
-        return Mono.just(new Person(id, ""));
+        return service.get(id);
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> delete(@PathVariable String id) {
-        return Mono.empty();
+        return service.delete(id);
     }
 
     @PutMapping
     public Mono<Void> put(@RequestBody Mono<Person> person) {
-        return Mono.empty();
+        return service.put(person);
     }
 
     @PostMapping
