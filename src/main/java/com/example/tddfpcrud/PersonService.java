@@ -9,23 +9,30 @@ import java.util.List;
 @Service
 public class PersonService {
 
+    private final PersonRepository repository;
+
+    public PersonService(PersonRepository repository) {
+        this.repository = repository;
+    }
+
     public Mono<Void> insert(Mono<Person> person) {
-        return Mono.empty();
+        return person
+                .map(repository::save).then();
     }
 
     public Flux<Person> list() {
-        return Flux.fromIterable(List.of(new Person("1", "jorge caro")));
+        return repository.findAll();
     }
 
     public Mono<Person> get(String id) {
-        return Mono.just(new Person(id, ""));
+        return repository.findById(id);
     }
 
     public Mono<Void> delete(String id) {
-        return Mono.empty();
+        return repository.deleteById(id);
     }
 
     public Mono<Void> put(Mono<Person> person) {
-        return Mono.empty();
+        return person.map(repository::save).then();
     }
 }
