@@ -7,8 +7,10 @@ public class Person {
     private String id;
     private String nombre;
 
-    public Person(String id, String nombre) {
-        this.id = id;
+    public Person() {
+    }
+
+    public Person(String nombre) {
         this.nombre = nombre;
     }
 

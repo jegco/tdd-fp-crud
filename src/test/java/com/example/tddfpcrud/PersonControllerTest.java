@@ -17,8 +17,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = PersonController.class)
@@ -80,10 +79,18 @@ public class PersonControllerTest {
                 .expectBody().isEmpty();
     }
 
-    @Test
-    public void post() {
-        var request = Mono.just(new Person("1", "jorge caro"));
-        when(repository.save(any())).thenReturn(Mono.just(new Person("1", "jorge caro")));
+    @ParameterizedTest
+    @CsvSource({"jorge caro, 0", "jorge caro2, 1"})
+    public void post(String name, Integer times) {
+        var request = Mono.just(new Person(name));
+        if(times == 0){
+            when(repository.findByNombre(name)).thenReturn(Mono.just(new Person(name)));
+        }
+
+        if(times == 1){
+            when(repository.findByNombre(name)).thenReturn(Mono.empty());
+        }
+
         webTestClient.post()
                 .uri("/api/person")
                 .body(request, Person.class)
@@ -92,7 +99,8 @@ public class PersonControllerTest {
                 .expectBody().isEmpty();
 
         verify(service).insert(captor.capture());
+        verify(repository, times(times)).save(any());
         var person = captor.getValue().block();
-        Assertions.assertEquals("jorge caro", person.getNombre());
+        Assertions.assertEquals(name, person.getNombre());
     }
 }

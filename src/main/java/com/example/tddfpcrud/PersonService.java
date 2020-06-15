@@ -5,9 +5,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 @Service
 public class PersonService {
+
+    private final BiFunction<PersonRepository, Person, Mono<Person>> validInsert = (repo, person) -> repo.findByNombre(person.getNombre());
 
     private final PersonRepository repository;
 
@@ -17,7 +20,9 @@ public class PersonService {
 
     public Mono<Void> insert(Mono<Person> person) {
         return person
-                .map(repository::save).then();
+                .flatMap(value -> validInsert.apply(repository, value))
+                .switchIfEmpty(Mono.defer( () -> person.doOnNext(repository::save)))
+                .then();
     }
 
     public Flux<Person> list() {
