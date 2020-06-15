@@ -2,6 +2,7 @@ package com.example.tddfpcrud;
 
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -12,5 +13,10 @@ public class PersonController {
     @GetMapping
     public Flux<Person> list() {
         return Flux.fromIterable(List.of(new Person("1", "jorge caro")));
+    }
+
+    @GetMapping("/{id}")
+    public Mono<Person> get(@PathVariable String id) {
+        return Mono.just(new Person(id, ""));
     }
 }

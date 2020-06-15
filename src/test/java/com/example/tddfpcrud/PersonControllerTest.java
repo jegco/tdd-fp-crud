@@ -25,4 +25,17 @@ public class PersonControllerTest {
                 .expectBody()
                 .jsonPath("$[0].name", "jorge caro");
     }
+
+    @Test
+    public void get() {
+        webTestClient.get()
+                .uri("/api/person/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Person.class).consumeWith(
+                personEntityExchangeResult -> {
+                    assert personEntityExchangeResult.getResponseBody() != null;
+                }
+        );
+    }
 }
