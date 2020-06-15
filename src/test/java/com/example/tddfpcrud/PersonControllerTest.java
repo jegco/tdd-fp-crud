@@ -3,16 +3,17 @@ package com.example.tddfpcrud;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = PersonController.class)
@@ -21,6 +22,12 @@ public class PersonControllerTest {
 
     @Autowired
     private WebTestClient webTestClient;
+
+    @SpyBean
+    private PersonService service;
+
+    @Captor
+    private ArgumentCaptor<Mono<Person>> captor;
 
     @Test
     public void list() {
@@ -74,5 +81,9 @@ public class PersonControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().isEmpty();
+
+        verify(service).insert(captor.capture());
+        var person = captor.getValue().block();
+        Assertions.assertEquals("jorge caro", person.getNombre());
     }
 }

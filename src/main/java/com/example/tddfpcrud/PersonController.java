@@ -10,6 +10,12 @@ import java.util.List;
 @RequestMapping("api/person")
 public class PersonController {
 
+    private final PersonService service;
+
+    public PersonController(PersonService service) {
+        this.service = service;
+    }
+
     @GetMapping
     public Flux<Person> list() {
         return Flux.fromIterable(List.of(new Person("1", "jorge caro")));
@@ -32,6 +38,6 @@ public class PersonController {
 
     @PostMapping
     public Mono<Void> post(@RequestBody Mono<Person> person) {
-        return Mono.empty();
+        return service.insert(person);
     }
 }
