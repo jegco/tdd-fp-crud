@@ -19,4 +19,9 @@ public class PersonController {
     public Mono<Person> get(@PathVariable String id) {
         return Mono.just(new Person(id, ""));
     }
+
+    @DeleteMapping("/{id}")
+    public Mono<Void> delete(@PathVariable String id) {
+        return Mono.empty();
+    }
 }

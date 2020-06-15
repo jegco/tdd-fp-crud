@@ -38,4 +38,13 @@ public class PersonControllerTest {
                 }
         );
     }
+
+    @Test
+    public void delete() {
+        webTestClient.delete()
+                .uri("/api/person/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().isEmpty();
+    }
 }
