@@ -24,4 +24,9 @@ public class PersonController {
     public Mono<Void> delete(@PathVariable String id) {
         return Mono.empty();
     }
+
+    @PutMapping
+    public Mono<Void> put(@RequestBody Mono<Person> person) {
+        return Mono.empty();
+    }
 }

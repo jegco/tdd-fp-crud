@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = PersonController.class)
@@ -43,6 +44,17 @@ public class PersonControllerTest {
     public void delete() {
         webTestClient.delete()
                 .uri("/api/person/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().isEmpty();
+    }
+
+    @Test
+    public void put() {
+        var request = Mono.empty();
+        webTestClient.put()
+                .uri("/api/person")
+                .body(request, Person.class)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().isEmpty();
