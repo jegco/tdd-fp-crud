@@ -29,4 +29,9 @@ public class PersonController {
     public Mono<Void> put(@RequestBody Mono<Person> person) {
         return Mono.empty();
     }
+
+    @PostMapping
+    public Mono<Void> post(@RequestBody Mono<Person> person) {
+        return Mono.empty();
+    }
 }
