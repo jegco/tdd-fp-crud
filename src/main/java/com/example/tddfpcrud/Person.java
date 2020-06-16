@@ -14,6 +14,11 @@ public class Person {
         this.nombre = nombre;
     }
 
+    public Person(String id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
     public String getId() {
         return id;
     }

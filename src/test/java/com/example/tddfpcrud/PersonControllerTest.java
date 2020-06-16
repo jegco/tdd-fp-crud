@@ -68,15 +68,29 @@ public class PersonControllerTest {
                 .expectBody().isEmpty();
     }
 
-    @Test
-    public void put() {
-        var request = Mono.empty();
-        webTestClient.put()
-                .uri("/api/person")
-                .body(request, Person.class)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().isEmpty();
+    @ParameterizedTest
+    @CsvSource({"0", "1"})
+    public void put(Integer times) {
+        Mono<Person> request;
+        when(repository.save(any())).thenReturn(Mono.empty());
+        if(times == 0){
+           request = Mono.just(new Person("1", "jorge caro"));
+            webTestClient.put()
+                    .uri("/api/person")
+                    .body(request, Person.class)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody().isEmpty();
+        }
+
+        else {
+            request = Mono.just(new Person( "jorge caro"));
+            webTestClient.put()
+                    .uri("/api/person")
+                    .body(request, Person.class)
+                    .exchange()
+                    .expectStatus().isBadRequest();
+        }
     }
 
     @ParameterizedTest

@@ -1,5 +1,7 @@
 package com.example.tddfpcrud;
 
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,8 +32,10 @@ public class PersonController {
     }
 
     @PutMapping
-    public Mono<Void> put(@RequestBody Mono<Person> person) {
-        return service.put(person);
+    public Mono<ResponseEntity<Void>> put(@RequestBody Mono<Person> person) {
+        return service.put(person)
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().build()));
     }
 
     @PostMapping

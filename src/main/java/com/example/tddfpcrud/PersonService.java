@@ -1,16 +1,21 @@
 package com.example.tddfpcrud;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Service
 public class PersonService {
 
     private final BiFunction<PersonRepository, Person, Mono<Person>> validInsert = (repo, person) -> repo.findByNombre(person.getNombre());
+
+    private final Function<Person, Mono<Person>> validUpdate = (person) -> person.getId() == null || person.getId().isEmpty() ? Mono.error(new Exception()) : Mono.just(person);
 
     private final PersonRepository repository;
 
@@ -38,6 +43,9 @@ public class PersonService {
     }
 
     public Mono<Void> put(Mono<Person> person) {
-        return person.map(repository::save).then();
+        return person
+                .flatMap(validUpdate)
+                .doOnError(Mono::error)
+                .map(repository::save).then();
     }
 }
